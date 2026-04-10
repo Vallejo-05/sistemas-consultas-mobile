@@ -18,7 +18,8 @@
  */
 
 import React from "react";
-import { View, Text, StyleSheet, Button } from "react-native";
+import { View, Text, Button } from "react-native";
+import { styles } from "../styles/consultaCard.styles";
 
 // Importamos a interface Consulta que criamos na aula passada
 // Ela vem de src/interfaces/ porque é usada em VÁRIOS lugares
