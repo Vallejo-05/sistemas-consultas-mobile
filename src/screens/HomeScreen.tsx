@@ -1,86 +1,84 @@
 /**
- * HomeScreen - Tela Principal do Paciente
- * Exibe resumo e menu de navegação com autenticação
+ * Home Screen - Tela Principal do Paciente
+ * Exibe informações do usuário e acesso rápido às funcionalidades
  */
 
 import React from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  ScrollView,
-  Alert,
-} from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, Alert, ScrollView } from "react-native";
+import { StatusBar } from "expo-status-bar";
 import { useAuth } from "../contexts/AuthContext";
 
-type HomeScreenProps = {
-  navigation: any;
-};
-
-export default function HomeScreen({ navigation }: HomeScreenProps) {
+export default function Home({ navigation }: any) {
   const { usuario, logout } = useAuth();
 
-  console.log("🏠 HomeScreen renderizado - Usuario:", usuario?.nome);
-
   async function handleLogout() {
-    console.log("� Iniciando logout...");
-    try {
-      await logout();
-      console.log("✅ Logout concluído com sucesso");
-    } catch (error) {
-      console.error("❌ Erro no logout:", error);
-      Alert.alert("Erro", "Não foi possível sair da conta. Tente novamente.");
-    }
+    Alert.alert(
+      "Sair",
+      "Deseja realmente sair da sua conta?",
+      [
+        { text: "Cancelar", style: "cancel" },
+        {
+          text: "Sair",
+          style: "destructive",
+          onPress: async () => {
+            await logout();
+          },
+        },
+      ]
+    );
   }
 
   return (
     <View style={styles.container}>
+      <StatusBar style="light" />
       <ScrollView contentContainerStyle={styles.scrollContent}>
-        {/* Cabeçalho */}
+
         <View style={styles.header}>
           <Text style={styles.icone}>👋</Text>
           <Text style={styles.titulo}>Olá, {usuario?.nome}!</Text>
           <Text style={styles.subtitulo}>O que deseja fazer hoje?</Text>
         </View>
 
-        {/* Cards de Navegação */}
-        <View style={styles.menu}>
+        <View style={styles.menuContainer}>
           <TouchableOpacity
-            style={[styles.card, styles.cardPrimario]}
+            style={[styles.menuItem, { backgroundColor: "#79059C" }]}
             onPress={() => navigation.navigate("MinhasConsultas")}
           >
-            <Text style={styles.cardIcone}>📅</Text>
-            <Text style={styles.cardTitulo}>Minhas Consultas</Text>
-            <Text style={styles.cardDescricao}>
-              Visualize e gerencie suas consultas
-            </Text>
+            <Text style={styles.menuIcone}>📅</Text>
+            <Text style={styles.menuTitulo}>Minhas Consultas</Text>
+            <Text style={styles.menuDescricao}>Ver e gerenciar suas consultas</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
-            style={[styles.card, styles.cardSecundario]}
+            style={[styles.menuItem, { backgroundColor: "#4CAF50" }]}
             onPress={() => navigation.navigate("Agendamento")}
           >
-            <Text style={styles.cardIcone}>➕</Text>
-            <Text style={styles.cardTitulo}>Agendar Consulta</Text>
-            <Text style={styles.cardDescricao}>
-              Agende uma nova consulta médica
-            </Text>
+            <Text style={styles.menuIcone}>➕</Text>
+            <Text style={styles.menuTitulo}>Agendar Consulta</Text>
+            <Text style={styles.menuDescricao}>Marcar nova consulta médica</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
-            style={[styles.card, styles.cardTerciario]}
+            style={[styles.menuItem, { backgroundColor: "#FF9800" }]}
             onPress={() => navigation.navigate("ConsultasList")}
           >
-            <Text style={styles.cardIcone}>📋</Text>
-            <Text style={styles.cardTitulo}>Histórico</Text>
-            <Text style={styles.cardDescricao}>
-              Ver todas as suas consultas
+            <Text style={styles.menuIcone}>📋</Text>
+            <Text style={styles.menuTitulo}>Histórico</Text>
+            <Text style={styles.menuDescricao}>Ver todas as suas consultas</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[styles.menuItem, { backgroundColor: "#C62828" }]}
+            onPress={() => navigation.navigate("PressaoArterial")}
+          >
+            <Text style={styles.menuIcone}>🩺</Text>
+            <Text style={styles.menuTitulo}>Pressão Arterial</Text>
+            <Text style={styles.menuDescricao}>
+              Aferir PA e acionar emergência cardiológica se grave
             </Text>
           </TouchableOpacity>
         </View>
 
-        {/* Botão de Logout */}
         <TouchableOpacity
           style={styles.logoutButton}
           onPress={handleLogout}
@@ -88,7 +86,6 @@ export default function HomeScreen({ navigation }: HomeScreenProps) {
           <Text style={styles.logoutText}>🚪 Sair da Conta</Text>
         </TouchableOpacity>
 
-        {/* Footer */}
         <View style={styles.footer}>
           <Text style={styles.footerText}>Sistema de Consultas Médicas</Text>
         </View>
@@ -103,11 +100,12 @@ const styles = StyleSheet.create({
     backgroundColor: "#f5f5f5",
   },
   scrollContent: {
-    padding: 20,
-    paddingBottom: 40,
+    flexGrow: 1,
   },
   header: {
-    marginBottom: 32,
+    backgroundColor: "#79059C",
+    padding: 32,
+    paddingTop: 48,
     alignItems: "center",
   },
   icone: {
@@ -117,47 +115,41 @@ const styles = StyleSheet.create({
   titulo: {
     fontSize: 28,
     fontWeight: "bold",
-    color: "#79059C",
+    color: "#fff",
     marginBottom: 8,
   },
   subtitulo: {
     fontSize: 16,
-    color: "#666",
+    color: "#fff",
+    opacity: 0.9,
   },
-  menu: {
+  menuContainer: {
+    padding: 20,
     gap: 16,
   },
-  card: {
+  menuItem: {
     padding: 24,
     borderRadius: 16,
-    boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.1)",
+    boxShadow: "0px 2px 8px rgba(0, 0, 0, 0.1)",
     elevation: 3,
   },
-  cardPrimario: {
-    backgroundColor: "#79059C",
-  },
-  cardSecundario: {
-    backgroundColor: "#4CAF50",
-  },
-  cardTerciario: {
-    backgroundColor: "#FF9800",
-  },
-  cardIcone: {
-    fontSize: 48,
+  menuIcone: {
+    fontSize: 40,
     marginBottom: 12,
   },
-  cardTitulo: {
+  menuTitulo: {
     fontSize: 20,
     fontWeight: "bold",
     color: "#fff",
-    marginBottom: 8,
+    marginBottom: 4,
   },
-  cardDescricao: {
+  menuDescricao: {
     fontSize: 14,
     color: "#fff",
     opacity: 0.9,
   },
   logoutButton: {
+    margin: 20,
     marginTop: 32,
     padding: 16,
     backgroundColor: "#fff",
@@ -172,8 +164,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   footer: {
-    marginTop: 24,
-    paddingTop: 20,
+    padding: 20,
     alignItems: "center",
   },
   footerText: {
@@ -183,6 +174,5 @@ const styles = StyleSheet.create({
   footerSubtext: {
     fontSize: 10,
     color: "#999",
-    marginTop: 4,
   },
 });

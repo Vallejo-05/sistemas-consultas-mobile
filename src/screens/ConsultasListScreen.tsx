@@ -47,7 +47,15 @@ export default function ConsultasListScreen({
         usuario?.id,
         isAdmin()
       );
-      setConsultas(dados);
+
+      const dadosOrdenados = dados.slice().sort((a, b) => {
+        const pa = a.prioridade || a.emergencia ? 1 : 0;
+        const pb = b.prioridade || b.emergencia ? 1 : 0;
+        return pb - pa;
+      });
+
+
+      setConsultas(dadosOrdenados);
     } catch (error) {
       console.error("Erro ao carregar consultas:", error);
       Alert.alert("Erro", "Não foi possível carregar as consultas");

@@ -1,12 +1,18 @@
+
 /**
- * Componente Card de Consulta
- * Exibe informações de uma consulta com ações disponíveis
- */
+* Componente Card de Consulta
+* Exibe informações de uma consulta com ações disponíveis
+*/
 
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { Consulta } from "../types";
-import { formatarData, formatarHorario, obterCorStatus, obterTextoStatus } from "../utils/formatters";
+import {
+  formatarData,
+  formatarHorario,
+  obterCorStatus,
+  obterTextoStatus,
+} from "../utils/formatters";
 
 type ConsultaCardProps = {
   consulta: Consulta;
@@ -24,7 +30,21 @@ export default function ConsultaCard({
   const corStatus = obterCorStatus(consulta.status);
 
   return (
-    <View style={styles.card}>
+    <View
+      style={[
+        styles.card,
+        consulta.emergencia && styles.cardEmergencia,
+      ]}
+    >
+      {/* Aviso de Emergência */}
+      {consulta.emergencia && (
+        <View style={styles.alertaEmergencia}>
+          <Text style={styles.alertaEmergenciaTexto}>
+            🚨 CONSULTA DE EMERGÊNCIA
+          </Text>
+        </View>
+      )}
+
       {/* Cabeçalho com Status */}
       <View style={[styles.statusBadge, { backgroundColor: corStatus }]}>
         <Text style={styles.statusTexto}>
@@ -51,18 +71,26 @@ export default function ConsultaCard({
       <View style={styles.row}>
         <View style={[styles.info, { flex: 1 }]}>
           <Text style={styles.label}>Data:</Text>
-          <Text style={styles.valor}>{formatarData(consulta.data)}</Text>
+          <Text style={styles.valor}>
+            {formatarData(consulta.data)}
+          </Text>
         </View>
+
         <View style={[styles.info, { flex: 1 }]}>
           <Text style={styles.label}>Horário:</Text>
-          <Text style={styles.valor}>{formatarHorario(consulta.horario)}</Text>
+          <Text style={styles.valor}>
+            {formatarHorario(consulta.horario)}
+          </Text>
         </View>
       </View>
 
+      {/* Observações */}
       {consulta.observacoes && (
         <View style={styles.info}>
           <Text style={styles.label}>Observações:</Text>
-          <Text style={styles.valorSecundario}>{consulta.observacoes}</Text>
+          <Text style={styles.valorSecundario}>
+            {consulta.observacoes}
+          </Text>
         </View>
       )}
 
@@ -77,7 +105,8 @@ export default function ConsultaCard({
           </TouchableOpacity>
         )}
 
-        {(consulta.status === "agendada" || consulta.status === "confirmada") &&
+        {(consulta.status === "agendada" ||
+          consulta.status === "confirmada") &&
           onCancelar && (
             <TouchableOpacity
               style={[styles.botao, styles.botaoCancelar]}
@@ -92,7 +121,9 @@ export default function ConsultaCard({
             style={[styles.botao, styles.botaoDetalhes]}
             onPress={() => onDetalhes(consulta.id)}
           >
-            <Text style={styles.botaoTextoSecundario}>Ver Detalhes</Text>
+            <Text style={styles.botaoTextoSecundario}>
+              Ver Detalhes
+            </Text>
           </TouchableOpacity>
         )}
       </View>
@@ -110,6 +141,31 @@ const styles = StyleSheet.create({
     boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.1)",
     elevation: 3,
   },
+
+  // Estilo especial para consultas de emergência
+  cardEmergencia: {
+    borderWidth: 2,
+    borderColor: "#B71C1C",
+    backgroundColor: "#FFEBEE",
+  },
+
+  // Alerta visual no topo do card
+  alertaEmergencia: {
+    backgroundColor: "#B71C1C",
+    borderRadius: 8,
+    paddingVertical: 8,
+    paddingHorizontal: 6,
+    marginBottom: 12,
+    marginRight: 950,
+    alignItems: "flex-start",
+  },
+
+  alertaEmergenciaTexto: {
+    color: "#fff",
+    fontWeight: "bold",
+    fontSize: 13,
+  },
+
   statusBadge: {
     alignSelf: "flex-start",
     paddingHorizontal: 12,
@@ -117,40 +173,48 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     marginBottom: 12,
   },
+
   statusTexto: {
     color: "#fff",
     fontWeight: "bold",
     fontSize: 12,
     textTransform: "uppercase",
   },
+
   info: {
     marginBottom: 8,
   },
+
   row: {
     flexDirection: "row",
     gap: 12,
   },
+
   label: {
     fontSize: 12,
     color: "#666",
     marginBottom: 2,
   },
+
   valor: {
     fontSize: 16,
     color: "#333",
     fontWeight: "600",
   },
+
   valorSecundario: {
     fontSize: 14,
     color: "#555",
     fontStyle: "italic",
   },
+
   acoes: {
     flexDirection: "row",
     flexWrap: "wrap",
     gap: 8,
     marginTop: 12,
   },
+
   botao: {
     paddingHorizontal: 16,
     paddingVertical: 10,
@@ -158,22 +222,27 @@ const styles = StyleSheet.create({
     minWidth: 100,
     alignItems: "center",
   },
+
   botaoConfirmar: {
     backgroundColor: "#4CAF50",
   },
+
   botaoCancelar: {
     backgroundColor: "#F44336",
   },
+
   botaoDetalhes: {
     backgroundColor: "#fff",
     borderWidth: 1,
     borderColor: "#79059C",
   },
+
   botaoTexto: {
     color: "#fff",
     fontWeight: "bold",
     fontSize: 14,
   },
+
   botaoTextoSecundario: {
     color: "#79059C",
     fontWeight: "bold",

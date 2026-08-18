@@ -1,83 +1,108 @@
 /**
- * Home Screen - Tela Principal do Paciente
- * Exibe informações do usuário e acesso rápido às funcionalidades
+ * HomeScreen - Tela Principal do Paciente
+ * Exibe resumo e menu de navegação com autenticação
  */
 
 import React from "react";
-import { View, Text, StyleSheet, TouchableOpacity, Alert, ScrollView } from "react-native";
-import { StatusBar } from "expo-status-bar";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  ScrollView,
+  Alert,
+} from "react-native";
 import { useAuth } from "../contexts/AuthContext";
 
-export default function Home({ navigation }: any) {
+type HomeScreenProps = {
+  navigation: any;
+};
+
+export default function HomeScreen({ navigation }: HomeScreenProps) {
   const { usuario, logout } = useAuth();
 
+  console.log("🏠 HomeScreen renderizado - Usuario:", usuario?.nome);
+
   async function handleLogout() {
-    Alert.alert(
-      "Sair",
-      "Deseja realmente sair da sua conta?",
-      [
-        { text: "Cancelar", style: "cancel" },
-        {
-          text: "Sair",
-          style: "destructive",
-          onPress: async () => {
-            await logout();
-          },
-        },
-      ]
-    );
+    console.log("� Iniciando logout...");
+    try {
+      await logout();
+      console.log("✅ Logout concluído com sucesso");
+    } catch (error) {
+      console.error("❌ Erro no logout:", error);
+      Alert.alert("Erro", "Não foi possível sair da conta. Tente novamente.");
+    }
   }
 
   return (
     <View style={styles.container}>
-      <StatusBar style="light" />
       <ScrollView contentContainerStyle={styles.scrollContent}>
-      
-      <View style={styles.header}>
-        <Text style={styles.icone}>👋</Text>
-        <Text style={styles.titulo}>Olá, {usuario?.nome}!</Text>
-        <Text style={styles.subtitulo}>O que deseja fazer hoje?</Text>
-      </View>
+        {/* Cabeçalho */}
+        <View style={styles.header}>
+          <Text style={styles.icone}>👋</Text>
+          <Text style={styles.titulo}>Olá, {usuario?.nome}!</Text>
+          <Text style={styles.subtitulo}>O que deseja fazer hoje?</Text>
+        </View>
 
-      <View style={styles.menuContainer}>
+        {/* Cards de Navegação */}
+        <View style={styles.menu}>
+          <TouchableOpacity
+            style={[styles.card, styles.cardPrimario]}
+            onPress={() => navigation.navigate("MinhasConsultas")}
+          >
+            <Text style={styles.cardIcone}>📅</Text>
+            <Text style={styles.cardTitulo}>Minhas Consultas</Text>
+            <Text style={styles.cardDescricao}>
+              Visualize e gerencie suas consultas
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[styles.card, styles.cardSecundario]}
+            onPress={() => navigation.navigate("Agendamento")}
+          >
+            <Text style={styles.cardIcone}>➕</Text>
+            <Text style={styles.cardTitulo}>Agendar Consulta</Text>
+            <Text style={styles.cardDescricao}>
+              Agende uma nova consulta médica
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[styles.card, styles.cardTerciario]}
+            onPress={() => navigation.navigate("ConsultasList")}
+          >
+            <Text style={styles.cardIcone}>📋</Text>
+            <Text style={styles.cardTitulo}>Histórico</Text>
+            <Text style={styles.cardDescricao}>
+              Ver todas as suas consultas
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[styles.card, styles.cardPressao]}
+            onPress={() => navigation.navigate("PressaoArterial")}
+          >
+            <Text style={styles.cardIcone}>🩺</Text>
+            <Text style={styles.cardTitulo}>Pressão Arterial</Text>
+            <Text style={styles.cardDescricao}>
+              Registrar aferição e acionar emergência se necessário
+            </Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* Botão de Logout */}
         <TouchableOpacity
-          style={[styles.menuItem, { backgroundColor: "#79059C" }]}
-          onPress={() => navigation.navigate("MinhasConsultas")}
+          style={styles.logoutButton}
+          onPress={handleLogout}
         >
-          <Text style={styles.menuIcone}>📅</Text>
-          <Text style={styles.menuTitulo}>Minhas Consultas</Text>
-          <Text style={styles.menuDescricao}>Ver e gerenciar suas consultas</Text>
+          <Text style={styles.logoutText}>🚪 Sair da Conta</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity
-          style={[styles.menuItem, { backgroundColor: "#4CAF50" }]}
-          onPress={() => navigation.navigate("Agendamento")}
-        >
-          <Text style={styles.menuIcone}>➕</Text>
-          <Text style={styles.menuTitulo}>Agendar Consulta</Text>
-          <Text style={styles.menuDescricao}>Marcar nova consulta médica</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={[styles.menuItem, { backgroundColor: "#FF9800" }]}
-          onPress={() => navigation.navigate("ConsultasList")}
-        >
-          <Text style={styles.menuIcone}>📋</Text>
-          <Text style={styles.menuTitulo}>Histórico</Text>
-          <Text style={styles.menuDescricao}>Ver todas as suas consultas</Text>
-        </TouchableOpacity>
-      </View>
-
-      <TouchableOpacity
-        style={styles.logoutButton}
-        onPress={handleLogout}
-      >
-        <Text style={styles.logoutText}>🚪 Sair da Conta</Text>
-      </TouchableOpacity>
-
-      <View style={styles.footer}>
-        <Text style={styles.footerText}>Sistema de Consultas Médicas</Text>
-      </View>
+        {/* Footer */}
+        <View style={styles.footer}>
+          <Text style={styles.footerText}>Sistema de Consultas Médicas</Text>
+        </View>
       </ScrollView>
     </View>
   );
@@ -89,12 +114,11 @@ const styles = StyleSheet.create({
     backgroundColor: "#f5f5f5",
   },
   scrollContent: {
-    flexGrow: 1,
+    padding: 20,
+    paddingBottom: 40,
   },
   header: {
-    backgroundColor: "#79059C",
-    padding: 32,
-    paddingTop: 48,
+    marginBottom: 32,
     alignItems: "center",
   },
   icone: {
@@ -104,41 +128,50 @@ const styles = StyleSheet.create({
   titulo: {
     fontSize: 28,
     fontWeight: "bold",
-    color: "#fff",
+    color: "#79059C",
     marginBottom: 8,
   },
   subtitulo: {
     fontSize: 16,
-    color: "#fff",
-    opacity: 0.9,
+    color: "#666",
   },
-  menuContainer: {
-    padding: 20,
+  menu: {
     gap: 16,
   },
-  menuItem: {
+  card: {
     padding: 24,
     borderRadius: 16,
-    boxShadow: "0px 2px 8px rgba(0, 0, 0, 0.1)",
+    boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.1)",
     elevation: 3,
   },
-  menuIcone: {
-    fontSize: 40,
+  cardPrimario: {
+    backgroundColor: "#79059C",
+  },
+  cardSecundario: {
+    backgroundColor: "#4CAF50",
+  },
+  cardTerciario: {
+    backgroundColor: "#FF9800",
+  },
+  cardPressao: {
+    backgroundColor: "#C62828",
+  },
+  cardIcone: {
+    fontSize: 48,
     marginBottom: 12,
   },
-  menuTitulo: {
+  cardTitulo: {
     fontSize: 20,
     fontWeight: "bold",
     color: "#fff",
-    marginBottom: 4,
+    marginBottom: 8,
   },
-  menuDescricao: {
+  cardDescricao: {
     fontSize: 14,
     color: "#fff",
     opacity: 0.9,
   },
   logoutButton: {
-    margin: 20,
     marginTop: 32,
     padding: 16,
     backgroundColor: "#fff",
@@ -153,7 +186,8 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   footer: {
-    padding: 20,
+    marginTop: 24,
+    paddingTop: 20,
     alignItems: "center",
   },
   footerText: {
@@ -163,5 +197,6 @@ const styles = StyleSheet.create({
   footerSubtext: {
     fontSize: 10,
     color: "#999",
+    marginTop: 4,
   },
 });
