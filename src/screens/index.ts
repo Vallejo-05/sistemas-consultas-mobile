@@ -11,4 +11,5 @@ export { default as CadastroPacienteScreen } from "./CadastroPaciente";
 export { default as MinhasConsultasScreen } from "./MinhasConsultas";
 export { default as AdminScreen } from "./Admin";
 export { default as AgendamentoScreen } from "./Agendamento";
-export { default as PressaoArterialScreen } from "./pressaoArterialScreen"
+export { default as PressaoArterialScreen } from "./PressaoArterialScreen";
+export { default as MedicoHomeScreen } from "./MedicoHomeScreen"
